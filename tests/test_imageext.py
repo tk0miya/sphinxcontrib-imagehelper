@@ -4,7 +4,7 @@ import sys
 import pickle
 from docutils import nodes
 from sphinx_testing import with_app
-from sphinxcontrib.imagehelper import add_image_type, ImageExtHandler
+from sphinxcontrib.imagehelper import add_image_type, ImageConverter
 from sphinxcontrib.imagehelper.imageext import on_builder_inited
 
 if sys.version_info < (2, 7):
@@ -13,7 +13,7 @@ else:
     import unittest
 
 
-class MyImageExtHandler(ImageExtHandler):
+class MyImageConverter(ImageConverter):
     def get_filename_for(self, node):
         return 'converted.png'
 
@@ -29,7 +29,7 @@ class TestSphinxcontrib(unittest.TestCase):
         .. image:: index.rst
            :option: foo=1&bar=abc
         """
-        add_image_type(app, 'name', '.rst', MyImageExtHandler)
+        add_image_type(app, 'name', '.rst', MyImageConverter)
         on_builder_inited(app)
         app.build()
 
@@ -52,7 +52,7 @@ class TestSphinxcontrib(unittest.TestCase):
 
            here is caption
         """
-        add_image_type(app, 'name', '.rst', MyImageExtHandler)
+        add_image_type(app, 'name', '.rst', MyImageConverter)
         on_builder_inited(app)
         app.build()
 

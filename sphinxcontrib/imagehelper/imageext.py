@@ -37,7 +37,7 @@ def on_doctree_resolved(app, doctree, docname):
                 handler(app).visit(docname, image)
 
 
-class ImageExtHandler(object):
+class ImageConverter(object):
     def __init__(self, app):
         self.app = app
         self.warn = app.warn
