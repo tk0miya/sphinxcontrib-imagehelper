@@ -36,7 +36,7 @@ Helpers
 
 `sphinxcontrib.imagehelper.ImageConverter`
     A handler class for converting image formats. It is used at `add_image_type()`.
-    The developers of sphinx-extensions should create a handler class which inherts `ImageConverter`,
+    The developers of sphinx-extensions should create a handler class which inherits `ImageConverter`,
     and should override two following methods:
 
     `ImageConverter.get_filename_for(self, node)`
