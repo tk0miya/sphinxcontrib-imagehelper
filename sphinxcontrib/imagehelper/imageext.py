@@ -1,6 +1,7 @@
 import os
 import cgi
 from docutils import nodes
+from sphinx.util.osutil import ensuredir
 from docutils.parsers.rst import directives
 from docutils.parsers.rst.directives.images import Image, Figure
 from sphinxcontrib.imagehelper.utils import get_imagedir, is_outdated
@@ -49,11 +50,16 @@ class ImageConverter(object):
         abs_imgpath = os.path.join(abs_imagedir, basename)
 
         if is_outdated(srcpath, abs_imgpath):
+            ensuredir(os.path.dirname(abs_imgpath))
             ret = self.convert(image_node, srcpath, abs_imgpath)
         else:
             ret = True
 
         if ret:
+            if os.path.exists(srcpath) and os.path.exists(abs_imgpath):
+                last_modified = os.stat(srcpath).st_mtime
+                os.utime(abs_imgpath, (last_modified, last_modified))
+
             rel_imgpath = os.path.join(rel_imagedir, basename)
             newnode = nodes.image(**image_node.attributes)
             newnode['candidates'] = {'*': rel_imgpath}
