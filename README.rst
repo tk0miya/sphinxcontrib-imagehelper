@@ -46,26 +46,26 @@ Helpers
             def get_filename_for(self, node):
                 return os.path.splitext(node['uri'])[0] + '.png'
 
-      `ImageConverter.convert(self, node, filename, to)`
-          Convert image to embedable format.
-          By default, this method does nothing.
+    `ImageConverter.convert(self, node, filename, to)`
+        Convert image to embedable format.
+        By default, this method does nothing.
 
-      For example::
+    For example::
 
-          class AstahConverter(ImageConverter):
-              def get_filename_for(self, node):
-                  # filename is determined from its URI and configuration
-                  hashed = sha1((node['uri'] + self.app.config.some_convert_settings).encode('utf-8')).hexdigest()
-                  return 'astah-%s.png' % hashed
+        class AstahConverter(ImageConverter):
+            def get_filename_for(self, node):
+                # filename is determined from its URI and configuration
+                hashed = sha1((node['uri'] + self.app.config.some_convert_settings).encode('utf-8')).hexdigest()
+                return 'astah-%s.png' % hashed
 
-              def convert(self, node, filename, to):
-                  succeeded = convert_astah_to_png(filename, to,
-                                                   option1=node['option'],
-                                                   option2=self.app.config.some_convert_settings)
-                  if succeeded:
-                      return True  # return True if conversion succeeded
-                  else:
-                      return False
+            def convert(self, node, filename, to):
+                succeeded = convert_astah_to_png(filename, to,
+                                                 option1=node['option'],
+                                                 option2=self.app.config.some_convert_settings)
+                if succeeded:
+                    return True  # return True if conversion succeeded
+                else:
+                    return False
 
 
 `sphinxcontrib.imagehelper.add_image_directive(app, name, option_spec={})`
