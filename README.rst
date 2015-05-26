@@ -68,6 +68,11 @@ Helpers
                     return False
 
 
+        def setup(app)
+            # Register new image type: astah
+            add_image_type(app, 'astah', 'asta', AstahConverter)
+
+
 `sphinxcontrib.imagehelper.add_image_directive(app, name, option_spec={})`
     Add a custom image directive to Sphinx.
     The directive is named as `name`-image (cf. astah-image).
