@@ -57,7 +57,3 @@ class TestSphinxcontrib(unittest.TestCase):
         # destination file is older than source
         destination.utime((last_modified - 1, last_modified - 1))
         self.assertEqual(True, is_outdated(source, destination))
-
-        # source and destination files are modified at same time
-        destination.utime((last_modified, last_modified))
-        self.assertEqual(False, is_outdated(source, destination))

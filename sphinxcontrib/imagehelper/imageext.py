@@ -1,5 +1,6 @@
 import os
 import cgi
+from math import ceil
 from docutils import nodes
 from sphinx.util.osutil import ensuredir
 from docutils.parsers.rst import directives
@@ -57,7 +58,7 @@ class ImageConverter(object):
 
         if ret:
             if os.path.exists(srcpath) and os.path.exists(abs_imgpath):
-                last_modified = os.stat(srcpath).st_mtime
+                last_modified = ceil(os.stat(srcpath).st_mtime)
                 os.utime(abs_imgpath, (last_modified, last_modified))
 
             rel_imgpath = os.path.join(rel_imagedir, basename)
