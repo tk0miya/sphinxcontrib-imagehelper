@@ -23,7 +23,7 @@ class TestSphinxcontrib(unittest.TestCase):
         with self.assertRaises(NotImplementedError):  # will raise error on writer
             app.build()
 
-        with open(app.builddir / 'doctrees' / app.config.master_doc + '.doctree') as fd:
+        with open(app.builddir / 'doctrees' / app.config.master_doc + '.doctree', 'rb') as fd:
             doctree = pickle.load(fd)
             self.assertIsInstance(doctree[0], image_node)
             self.assertEqual(doctree[0]['uri'], 'contents.rst')
@@ -39,7 +39,7 @@ class TestSphinxcontrib(unittest.TestCase):
         with self.assertRaises(NotImplementedError):  # will raise error on writer
             app.build()
 
-        with open(app.builddir / 'doctrees' / 'contents.doctree') as fd:
+        with open(app.builddir / 'doctrees' / 'contents.doctree', 'rb') as fd:
             doctree = pickle.load(fd)
             self.assertIsInstance(doctree[0], image_node)
             self.assertEqual(doctree[0]['uri'], 'contents.rst')
@@ -56,7 +56,7 @@ class TestSphinxcontrib(unittest.TestCase):
         with self.assertRaises(NotImplementedError):  # will raise error on writer
             app.build()
 
-        with open(app.builddir / 'doctrees' / 'contents.doctree') as fd:
+        with open(app.builddir / 'doctrees' / 'contents.doctree', 'rb') as fd:
             doctree = pickle.load(fd)
             self.assertIsInstance(doctree[0], nodes.figure)
             self.assertIsInstance(doctree[0][0], image_node)
@@ -77,7 +77,7 @@ class TestSphinxcontrib(unittest.TestCase):
         with self.assertRaises(NotImplementedError):  # will raise error on writer
             app.build()
 
-        with open(app.builddir / 'doctrees' / 'contents.doctree') as fd:
+        with open(app.builddir / 'doctrees' / 'contents.doctree', 'rb') as fd:
             doctree = pickle.load(fd)
             self.assertIsInstance(doctree[0], nodes.figure)
             self.assertIsInstance(doctree[0][0], image_node)

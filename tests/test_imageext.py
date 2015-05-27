@@ -37,7 +37,7 @@ class TestSphinxcontrib(unittest.TestCase):
         on_builder_inited(app)
         app.build()
 
-        with open(app.builddir / 'doctrees' / 'contents.doctree') as fd:
+        with open(app.builddir / 'doctrees' / 'contents.doctree', 'rb') as fd:
             doctree = pickle.load(fd)
             self.assertIsInstance(doctree[0], nodes.image)
             self.assertEqual(doctree[0]['uri'], 'example.img')
@@ -76,7 +76,7 @@ class TestSphinxcontrib(unittest.TestCase):
         on_builder_inited(app)
         app.build()
 
-        with open(app.builddir / 'doctrees' / 'contents.doctree') as fd:
+        with open(app.builddir / 'doctrees' / 'contents.doctree', 'rb') as fd:
             doctree = pickle.load(fd)
             self.assertIsInstance(doctree[0], nodes.figure)
             self.assertIsInstance(doctree[0][0], nodes.image)
