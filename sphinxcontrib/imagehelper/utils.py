@@ -19,12 +19,12 @@ def get_imagedir(app, docname):
     return (relpath, abspath)
 
 
-def is_outdated(astah_path, png_path):
-    if not os.path.exists(astah_path):
+def is_outdated(source, destination):
+    if not os.path.exists(source):
         return False
     else:
-        last_modified = os.stat(astah_path).st_mtime
-        if not os.path.exists(png_path) or os.stat(png_path).st_mtime < last_modified:
+        last_modified = os.stat(source).st_mtime
+        if not os.path.exists(destination) or os.stat(destination).st_mtime < last_modified:
             return True
         else:
             return False
