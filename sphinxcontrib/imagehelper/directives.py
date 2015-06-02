@@ -1,4 +1,5 @@
 import os
+import posixpath
 from docutils import nodes
 from docutils.parsers.rst.directives.images import Image, Figure
 from sphinxcontrib.imagehelper import image_node
@@ -17,7 +18,7 @@ class ImageExtMixIn(object):
 
         env = self.state.document.settings.env
         dirname = os.path.dirname(env.doc2path(env.docname, base=None))
-        relpath = os.path.join(dirname, self.arguments[0])
+        relpath = posixpath.join(dirname, self.arguments[0])
         if not os.access(os.path.join(env.srcdir, relpath), os.R_OK):
             raise self.warning('%s file not readable: %s' % (self.imageext_type, self.arguments[0]))
 

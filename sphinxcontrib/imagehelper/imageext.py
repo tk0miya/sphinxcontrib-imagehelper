@@ -1,5 +1,6 @@
 import os
 import cgi
+import posixpath
 from math import ceil
 from docutils import nodes
 from sphinx.util.osutil import ensuredir
@@ -61,7 +62,7 @@ class ImageConverter(object):
                 last_modified = ceil(os.stat(srcpath).st_mtime)
                 os.utime(abs_imgpath, (last_modified, last_modified))
 
-            rel_imgpath = os.path.join(rel_imagedir, basename)
+            rel_imgpath = posixpath.join(rel_imagedir, basename)
             newnode = nodes.image(**image_node.attributes)
             newnode['candidates'] = {'*': rel_imgpath}
             newnode['uri'] = rel_imgpath
