@@ -10,10 +10,20 @@ sphinxcontrib-imagehelper
 .. image:: https://codeclimate.com/github/tk0miya/sphinxcontrib-imagehelper/badges/gpa.svg
    :target: https://codeclimate.com/github/tk0miya/sphinxcontrib-imagehelper
 
-This package contains the helpers for creating Sphinx image extensions.
+`sphinxcontrib-imagehelper` is helpers for creating image Sphinx extensions.
 
-This extension enhance common image directives; `image` and `figure` directive.
-With `sphinxcontrib-imagehelper`, these image directives get capability to embed custom images.
+Adding new image format support to Sphinx is too boring.
+This helper helps you to create image sphinx extensions.
+
+It provides these features:
+
+* Caching converted images
+* Conseal sphinx directory structure; determine path of images automatically
+* Support common options for image directive (cf. `:height:`, `:scale:`, `:align:`, and so on)
+* Enhance standard imaging directives; `image` and `figure` get capability to embed new image format
+
+With `sphinxcontrib-imagehelper`, all you have to do is only convert new image format to
+well known image formats.
 
 Setting
 =======
