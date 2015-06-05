@@ -25,11 +25,8 @@ It provides these features:
 With `sphinxcontrib-imagehelper`, all you have to do is only convert new image format to
 well known image formats.
 
-Setting
-=======
-
 Install
--------
+=======
 
 ::
 
