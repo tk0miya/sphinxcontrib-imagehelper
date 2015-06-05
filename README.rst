@@ -51,6 +51,7 @@ Example
 
         # Override `convert()` to convert new image format to well known image formats (PNG, JPG and so on)
         def convert(self, node, filename, to):
+            # Hint: you can refer self.app.builder.format to switch conversion behavior
             succeeded = convert_myimage_to_png(filename, to,
                                                option1=node['option'],
                                                option2=self.app.config.some_convert_settings)
