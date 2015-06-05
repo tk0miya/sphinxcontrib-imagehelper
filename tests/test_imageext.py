@@ -97,8 +97,8 @@ class TestSphinxcontrib(unittest.TestCase):
         """
         class TestImageConverter(MyImageConverter):
             def convert(_self, node, filename, to):
-                self.assertEqual(_self.app.srcdir / 'subdir/example.img', filename)
-                self.assertEqual(_self.app.outdir / '_images/converted.png', to)
+                self.assertEqual(_self.app.srcdir / 'subdir' / 'example.img', filename)
+                self.assertEqual(_self.app.outdir / '_images' / 'converted.png', to)
                 return super(TestImageConverter, _self).convert(node, filename, to)
 
         (app.srcdir / 'subdir').makedirs()
