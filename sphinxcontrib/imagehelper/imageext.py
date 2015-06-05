@@ -53,7 +53,9 @@ class ImageConverter(object):
 
         if is_outdated(srcpath, abs_imgpath):
             ensuredir(os.path.dirname(abs_imgpath))
-            ret = self.convert(image_node, srcpath, abs_imgpath)
+            ret = self.convert(image_node,
+                               os.path.normpath(srcpath),
+                               os.path.normpath(abs_imgpath))
         else:
             ret = True
 
