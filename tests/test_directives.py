@@ -29,6 +29,25 @@ class TestSphinxcontrib(unittest.TestCase):
             self.assertEqual(doctree[0]['uri'], 'contents.rst')
 
     @with_app(buildername='html', write_docstring=True, create_new_srcdir=True)
+    def test_add_image_directive_in_subdir(self, app, status, warnings):
+        """
+        .. foo-image:: subdir/contents.rst
+        """
+        (app.srcdir / 'subdir').makedirs()
+        (app.srcdir / 'subdir' / 'contents.rst').write_text('')
+
+        add_image_directive(app, 'foo')
+        with self.assertRaises(NotImplementedError):  # will raise error on writer
+            app.build()
+            print status.getvalue()
+            print warnings.getvalue()
+
+        with open(app.builddir / 'doctrees' / app.config.master_doc + '.doctree', 'rb') as fd:
+            doctree = pickle.load(fd)
+            self.assertIsInstance(doctree[0], image_node)
+            self.assertEqual(doctree[0]['uri'], 'subdir/contents.rst')
+
+    @with_app(buildername='html', write_docstring=True, create_new_srcdir=True)
     def test_add_image_directive_with_option_spec(self, app, status, warnings):
         """
         .. foo-image:: contents.rst

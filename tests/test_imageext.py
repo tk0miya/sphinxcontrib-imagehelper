@@ -89,3 +89,24 @@ class TestSphinxcontrib(unittest.TestCase):
         with open(app.outdir / 'contents.html') as fd:
             html = fd.read()
             self.assertIn('<img alt="_images/converted.png" src="_images/converted.png" />', html)
+
+    @with_app(buildername='html', write_docstring=True, create_new_srcdir=True)
+    def test_add_image_type_in_subdir(self, app, status, warnings):
+        """
+        .. image:: subdir/example.img
+        """
+        class TestImageConverter(MyImageConverter):
+            def convert(_self, node, filename, to):
+                self.assertEqual(_self.app.srcdir / 'subdir/example.img', filename)
+                self.assertEqual(_self.app.outdir / '_images/converted.png', to)
+                return super(TestImageConverter, _self).convert(node, filename, to)
+
+        (app.srcdir / 'subdir').makedirs()
+        (app.srcdir / 'subdir' / 'example.img').write_text('')
+        add_image_type(app, 'name', '.img', TestImageConverter)
+        on_builder_inited(app)
+        app.build()
+
+        with open(app.outdir / 'contents.html') as fd:
+            html = fd.read()
+            self.assertIn('<img alt="_images/converted.png" src="_images/converted.png" />', html)
