@@ -32,7 +32,42 @@ Install
 
    $ pip install sphinxcontrib-imagehelper
 
+Example
+=======
 
+::
+
+    from sphinxcontrib.imagehelper import (
+        add_image_type, add_image_directive, add_figure_directive, ImageConverter
+    )
+
+    # Declare converter class inherits ImageConverter
+    class MyImageConverter(ImageConverter):
+        # Override `get_filename_for()` to determine filename
+        def get_filename_for(self, node):
+            # filename is came from its URI and configuration
+            hashed = sha1((node['uri'] + self.app.config.some_convert_settings).encode('utf-8')).hexdigest()
+            return 'myimage-%s.png' % hashed
+
+        # Override `convert()` to convert new image format to well known image formats (PNG, JPG and so on)
+        def convert(self, node, filename, to):
+            succeeded = convert_myimage_to_png(filename, to,
+                                               option1=node['option'],
+                                               option2=self.app.config.some_convert_settings)
+            if succeeded:
+                return True  # return True if conversion succeeded
+            else:
+                return False
+
+    def setup(app)
+        # Register new image type: myimage
+        add_image_type(app, 'my', 'img', MyImageConverter)
+
+        # Register my-image directive
+        add_image_directive(app, 'my')
+
+        # Register my-figure directive
+        add_figure_directive(app, 'my')
 
 Helpers
 =======
@@ -56,29 +91,6 @@ Helpers
     `ImageConverter.convert(self, node, filename, to)`
         Convert image to embedable format.
         By default, this method does nothing.
-
-    For example::
-
-        class AstahConverter(ImageConverter):
-            def get_filename_for(self, node):
-                # filename is determined from its URI and configuration
-                hashed = sha1((node['uri'] + self.app.config.some_convert_settings).encode('utf-8')).hexdigest()
-                return 'astah-%s.png' % hashed
-
-            def convert(self, node, filename, to):
-                succeeded = convert_astah_to_png(filename, to,
-                                                 option1=node['option'],
-                                                 option2=self.app.config.some_convert_settings)
-                if succeeded:
-                    return True  # return True if conversion succeeded
-                else:
-                    return False
-
-
-        def setup(app)
-            # Register new image type: astah
-            add_image_type(app, 'astah', 'asta', AstahConverter)
-
 
 `sphinxcontrib.imagehelper.add_image_directive(app, name, option_spec={})`
     Add a custom image directive to Sphinx.
