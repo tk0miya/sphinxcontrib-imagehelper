@@ -39,8 +39,6 @@ class TestSphinxcontrib(unittest.TestCase):
         add_image_directive(app, 'foo')
         with self.assertRaises(NotImplementedError):  # will raise error on writer
             app.build()
-            print status.getvalue()
-            print warnings.getvalue()
 
         with open(app.builddir / 'doctrees' / app.config.master_doc + '.doctree', 'rb') as fd:
             doctree = pickle.load(fd)
