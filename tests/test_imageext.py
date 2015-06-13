@@ -6,6 +6,7 @@ from time import time
 from docutils import nodes
 from shutil import copyfile
 from sphinx_testing import with_app
+from docutils.parsers.rst import directives
 from sphinxcontrib.imagehelper import add_image_type, ImageConverter
 from sphinxcontrib.imagehelper.imageext import on_builder_inited
 
@@ -16,6 +17,11 @@ else:
 
 
 class MyImageConverter(ImageConverter):
+    option_spec = {
+        'foo': directives.positive_int,
+        'bar': directives.unchanged
+    }
+
     def get_filename_for(self, node):
         return 'converted.png'
 
@@ -41,7 +47,7 @@ class TestSphinxcontrib(unittest.TestCase):
             doctree = pickle.load(fd)
             self.assertIsInstance(doctree[0], nodes.image)
             self.assertEqual(doctree[0]['uri'], 'example.img')
-            self.assertEqual(doctree[0]['foo'], '1')
+            self.assertEqual(doctree[0]['foo'], 1)
             self.assertEqual(doctree[0]['bar'], 'abc')
 
         with open(app.outdir / 'contents.html') as fd:
@@ -81,7 +87,7 @@ class TestSphinxcontrib(unittest.TestCase):
             self.assertIsInstance(doctree[0], nodes.figure)
             self.assertIsInstance(doctree[0][0], nodes.image)
             self.assertEqual(doctree[0][0]['uri'], 'example.img')
-            self.assertEqual(doctree[0][0]['foo'], '1')
+            self.assertEqual(doctree[0][0]['foo'], 1)
             self.assertEqual(doctree[0][0]['bar'], 'abc')
             self.assertIsInstance(doctree[0][1], nodes.caption)
             self.assertEqual(doctree[0][1][0], 'here is caption')
@@ -110,3 +116,43 @@ class TestSphinxcontrib(unittest.TestCase):
         with open(app.outdir / 'contents.html') as fd:
             html = fd.read()
             self.assertIn('<img alt="_images/converted.png" src="_images/converted.png" />', html)
+
+    @with_app(buildername='html', write_docstring=True, create_new_srcdir=True)
+    def test_add_image_type_with_unsupported_option(self, app, status, warnings):
+        """
+        .. image:: example.img
+           :option: foo=1&bar=abc&baz=def
+        """
+        (app.srcdir / 'example.img').write_text('')
+        add_image_type(app, 'name', '.img', MyImageConverter)
+        on_builder_inited(app)
+        app.build()
+
+        self.assertIn('WARNING: Unsupported option `baz` found at example.img', warnings.getvalue())
+        with open(app.builddir / 'doctrees' / 'contents.doctree', 'rb') as fd:
+            doctree = pickle.load(fd)
+            self.assertIsInstance(doctree[0], nodes.image)
+            self.assertEqual(doctree[0]['uri'], 'example.img')
+            self.assertEqual(doctree[0]['foo'], 1)
+            self.assertEqual(doctree[0]['bar'], 'abc')
+            self.assertNotIn('baz', doctree[0])
+
+    @with_app(buildername='html', write_docstring=True, create_new_srcdir=True)
+    def test_add_image_type_with_invalid_option(self, app, status, warnings):
+        """
+        .. image:: example.img
+           :option: foo=abc
+        """
+        (app.srcdir / 'example.img').write_text('')
+        add_image_type(app, 'name', '.img', MyImageConverter)
+        on_builder_inited(app)
+        app.build()
+
+        self.assertIn(('WARNING: Fail to apply `foo` option to example.img:\n'
+                       'invalid literal for int() with base 10: \'abc\'\n'),
+                      warnings.getvalue())
+        with open(app.builddir / 'doctrees' / 'contents.doctree', 'rb') as fd:
+            doctree = pickle.load(fd)
+            self.assertIsInstance(doctree[0], nodes.image)
+            self.assertEqual(doctree[0]['uri'], 'example.img')
+            self.assertNotIn('foo', doctree[0])

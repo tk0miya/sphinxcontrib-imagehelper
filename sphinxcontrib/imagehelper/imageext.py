@@ -13,6 +13,15 @@ class image_node(nodes.General, nodes.Element):
     pass
 
 
+def get_imageext_handler(app, uri):
+    ext = os.path.splitext(uri.lower())[1][1:]
+    if ext in app.imageext_types:
+        _, handler = app.imageext_types[ext]
+        return handler
+    else:
+        return None
+
+
 def on_builder_inited(app):
     Image.option_spec['option'] = directives.unchanged
     Figure.option_spec['option'] = directives.unchanged
@@ -20,10 +29,35 @@ def on_builder_inited(app):
 
 def on_doctree_read(app, doctree):
     for image in doctree.traverse(nodes.image):
+        handler = get_imageext_handler(app, image['uri'])
+        option_spec = getattr(handler, 'option_spec', {})
+
         options = cgi.parse_qs(image.get('option', ''))
         for name in options:
-            for value in options.get(name):
-                image[name] = value
+            if name not in option_spec:
+                app.warn('Unsupported option `%s` found at %s' % (name, image['uri']))
+            else:
+                try:
+                    for value in options.get(name):
+                        image[name] = option_spec[name](value)
+                except (ValueError, TypeError) as exc:
+                    app.warn('Fail to apply `%s` option to %s:\n%s' %
+                             (name, image['uri'], ' '.join(exc.args)))
+
+"""
+                    /Users/tkomiya/work/tmp/doc/index.rst:21: ERROR: Error in "image" directive:
+                        invalid option value: (option: "width"; value: 'hello')
+                        not a positive measure of one of the following units:
+                            "em" "ex" "px" "in" "cm" "mm" "pt" "pc" "%".
+
+                            .. image:: animal.asta
+                               :width: hello
+
+i        except (ValueError, TypeError), detail:
+            raise detail.__class__('(option: "%s"; value: %r)\n%s'
+                                           % (name, value, ' '.join(detail.args)))
+                return options
+"""
 
 
 def on_doctree_resolved(app, doctree, docname):
@@ -41,6 +75,8 @@ def on_doctree_resolved(app, doctree, docname):
 
 
 class ImageConverter(object):
+    option_spec = {}
+
     def __init__(self, app):
         self.app = app
         self.warn = app.warn

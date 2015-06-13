@@ -82,6 +82,10 @@ Helpers
     The developers of sphinx-extensions should create a handler class which inherits `ImageConverter`,
     and should override two following methods:
 
+    `ImageConverter.option_spec`
+        A definition of additional options.
+        By default, it is empty dict.
+
     `ImageConverter.get_filename_for(self, node)`
         Determine a filename of converted image.
         By default, this method returns the filename replaced its extension with '.png'::
