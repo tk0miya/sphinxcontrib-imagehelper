@@ -57,6 +57,7 @@ def on_doctree_resolved(app, doctree, docname):
         for name, handler in app.imageext_types.values():
             if name == image['imageext_type']:
                 handler(app).visit(docname, image)
+                break
 
 
 class ImageConverter(object):
