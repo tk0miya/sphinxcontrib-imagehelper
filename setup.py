@@ -8,7 +8,7 @@ requires = ['Sphinx>=0.6']
 
 setup(
     name='sphinxcontrib-imagehelper',
-    version='0.1.0',
+    version='1.0.0',
     url='https://github.com/tk0miya/sphinxcontrib-imagehelper',
     license='BSD',
     author='Takeshi KOMIYA',
