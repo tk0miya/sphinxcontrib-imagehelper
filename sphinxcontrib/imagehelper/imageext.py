@@ -44,21 +44,6 @@ def on_doctree_read(app, doctree):
                     app.warn('Fail to apply `%s` option to %s:\n%s' %
                              (name, image['uri'], ' '.join(exc.args)))
 
-"""
-                    /Users/tkomiya/work/tmp/doc/index.rst:21: ERROR: Error in "image" directive:
-                        invalid option value: (option: "width"; value: 'hello')
-                        not a positive measure of one of the following units:
-                            "em" "ex" "px" "in" "cm" "mm" "pt" "pc" "%".
-
-                            .. image:: animal.asta
-                               :width: hello
-
-i        except (ValueError, TypeError), detail:
-            raise detail.__class__('(option: "%s"; value: %r)\n%s'
-                                           % (name, value, ' '.join(detail.args)))
-                return options
-"""
-
 
 def on_doctree_resolved(app, doctree, docname):
     for image in doctree.traverse(nodes.image):
