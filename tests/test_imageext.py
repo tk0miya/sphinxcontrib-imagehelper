@@ -156,3 +156,23 @@ class TestSphinxcontrib(unittest.TestCase):
             self.assertIsInstance(doctree[0], nodes.image)
             self.assertEqual(doctree[0]['uri'], 'example.img')
             self.assertNotIn('foo', doctree[0])
+
+    @with_app(buildername='html', write_docstring=True, create_new_srcdir=True)
+    def test_add_image_type_with_multiple_extensions(self, app, status, warnings):
+        """
+        .. image:: example.img
+
+        .. image:: example.imgx
+        """
+        (app.srcdir / 'example.img').write_text('')
+        (app.srcdir / 'example.imgx').write_text('')
+        add_image_type(app, 'name', ('.img', '.imgx'), MyImageConverter)
+        on_builder_inited(app)
+        app.build()
+
+        with open(app.builddir / 'doctrees' / 'contents.doctree', 'rb') as fd:
+            doctree = pickle.load(fd)
+            self.assertIsInstance(doctree[0], nodes.image)
+            self.assertEqual(doctree[0]['uri'], 'example.img')
+            self.assertIsInstance(doctree[1], nodes.image)
+            self.assertEqual(doctree[1]['uri'], 'example.imgx')

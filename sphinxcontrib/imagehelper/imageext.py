@@ -106,7 +106,11 @@ def add_image_type(app, name, ext, handler):
         app.connect('doctree-resolved', on_doctree_resolved)
         app.imageext_types = {}
 
-    if ext.startswith('.'):
-        ext = ext[1:]
+    if isinstance(ext, (list, tuple)):
+        for e in ext:
+            add_image_type(app, name, e, handler)
+    else:
+        if ext.startswith('.'):
+            ext = ext[1:]
 
-    app.imageext_types[ext] = (name, handler)
+        app.imageext_types[ext] = (name, handler)
