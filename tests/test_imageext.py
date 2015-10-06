@@ -176,3 +176,20 @@ class TestSphinxcontrib(unittest.TestCase):
             self.assertEqual(doctree[0]['uri'], 'example.img')
             self.assertIsInstance(doctree[1], nodes.image)
             self.assertEqual(doctree[1]['uri'], 'example.imgx')
+
+    @with_app(buildername='html', write_docstring=True, create_new_srcdir=True)
+    def test_add_image_type_on_conversion_failed(self, app, status, warnings):
+        """
+        .. image:: example.img
+        """
+        class FailureConverter(ImageConverter):
+            def convert(self, node, filename, to):
+                return False
+
+        (app.srcdir / 'example.img').write_text('')
+        add_image_type(app, 'name', '.img', FailureConverter)
+        on_builder_inited(app)
+        app.build()
+
+        html = (app.builddir / 'html' / 'contents.html').read_text()
+        self.assertRegexpMatches(html, '<div class="body" role="main">\s*</div>')

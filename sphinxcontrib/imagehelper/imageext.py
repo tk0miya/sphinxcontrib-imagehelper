@@ -91,6 +91,8 @@ class ImageConverter(object):
             newnode['candidates'] = {'*': rel_imgpath}
             newnode['uri'] = rel_imgpath
             image_node.replace_self(newnode)
+        else:
+            image_node.replace_self(nodes.Text(''))
 
     def get_filename_for(self, node):
         return os.path.splitext(node['uri'])[0] + '.png'
