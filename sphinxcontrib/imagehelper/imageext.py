@@ -6,7 +6,7 @@ from docutils import nodes
 from sphinx.util.osutil import ensuredir
 from docutils.parsers.rst import directives
 from docutils.parsers.rst.directives.images import Image, Figure
-from sphinxcontrib.imagehelper.utils import get_imagedir, is_outdated
+from sphinxcontrib.imagehelper.utils import get_imagedir
 
 
 class image_node(nodes.General, nodes.Element):
@@ -67,13 +67,23 @@ class ImageConverter(object):
         self.app = app
         self.warn = app.warn
 
+    def get_last_modified(self, uri):
+        path = os.path.join(self.app.srcdir, uri)
+        if os.path.exists(path):
+            return ceil(os.stat(path).st_mtime)
+        else:
+            return None
+
     def visit(self, docname, image_node):
         rel_imagedir, abs_imagedir = get_imagedir(self.app, docname)
         basename = self.get_filename_for(image_node)
         srcpath = os.path.join(self.app.srcdir, image_node['uri'])
         abs_imgpath = os.path.join(abs_imagedir, basename)
 
-        if is_outdated(srcpath, abs_imgpath):
+        last_modified = self.get_last_modified(image_node['uri'])
+        if not os.path.exists(srcpath):
+            ret = False
+        elif not os.path.exists(abs_imgpath) or os.stat(abs_imgpath).st_mtime < last_modified:
             ensuredir(os.path.dirname(abs_imgpath))
             ret = self.convert(image_node,
                                os.path.normpath(srcpath),
@@ -83,7 +93,6 @@ class ImageConverter(object):
 
         if ret:
             if os.path.exists(srcpath) and os.path.exists(abs_imgpath):
-                last_modified = ceil(os.stat(srcpath).st_mtime)
                 os.utime(abs_imgpath, (last_modified, last_modified))
 
             rel_imgpath = posixpath.join(rel_imagedir, basename)

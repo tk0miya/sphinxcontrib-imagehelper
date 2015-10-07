@@ -86,6 +86,10 @@ Helpers
         A definition of additional options.
         By default, it is empty dict.
 
+    `ImageConverter.get_last_modified(self, uri)`
+        Determine last modified time of target image.
+        By default, this method returns the timestamp of the image file.
+
     `ImageConverter.get_filename_for(self, node)`
         Determine a filename of converted image.
         By default, this method returns the filename replaced its extension with '.png'::
