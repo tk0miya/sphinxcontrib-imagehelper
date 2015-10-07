@@ -22,6 +22,14 @@ def get_imageext_handler(app, uri):
         return None
 
 
+def get_imageext_handler_by_name(app, imageext_type):
+    for name, handler in app.imageext_types.values():
+        if name == imageext_type:
+            return handler
+    else:
+        return None
+
+
 def on_builder_inited(app):
     Image.option_spec['option'] = directives.unchanged
     Figure.option_spec['option'] = directives.unchanged
@@ -47,17 +55,14 @@ def on_doctree_read(app, doctree):
 
 def on_doctree_resolved(app, doctree, docname):
     for image in doctree.traverse(nodes.image):
-        ext = os.path.splitext(image['uri'].lower())[1][1:]
-        if ext in app.imageext_types:
-            name, handler = app.imageext_types[ext]
+        handler = get_imageext_handler(app, image['uri'])
+        if handler:
             handler(app).visit(docname, image)
 
     for image in doctree.traverse(image_node):
-        name = image['imageext_type']
-        for name, handler in app.imageext_types.values():
-            if name == image['imageext_type']:
-                handler(app).visit(docname, image)
-                break
+        handler = get_imageext_handler_by_name(app, image['imageext_type'])
+        if handler:
+            handler(app).visit(docname, image)
 
 
 class ImageConverter(object):
