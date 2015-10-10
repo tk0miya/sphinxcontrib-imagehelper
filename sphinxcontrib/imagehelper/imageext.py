@@ -1,4 +1,5 @@
 import os
+import re
 import cgi
 import posixpath
 from math import ceil
@@ -19,7 +20,12 @@ def get_imageext_handler(app, uri):
         _, handler = app.imageext_types[ext]
         return handler
     else:
-        return None
+        for pattern in app.imageext_url_patterns:
+            if uri.startswith(pattern):
+                _, handler = app.imageext_url_patterns[pattern]
+                return handler
+        else:
+            return None
 
 
 def get_imageext_handler_by_name(app, imageext_type):
@@ -27,6 +33,10 @@ def get_imageext_handler_by_name(app, imageext_type):
         if name == imageext_type:
             return handler
     else:
+        for name, handler in app.imageext_url_patterns.values():
+            if name == imageext_type:
+                return handler
+
         return None
 
 
@@ -72,21 +82,14 @@ class ImageConverter(object):
         self.app = app
         self.warn = app.warn
 
-    def get_last_modified(self, uri):
-        path = os.path.join(self.app.srcdir, uri)
-        if os.path.exists(path):
-            return ceil(os.stat(path).st_mtime)
-        else:
-            return None
-
     def visit(self, docname, image_node):
         rel_imagedir, abs_imagedir = get_imagedir(self.app, docname)
         basename = self.get_filename_for(image_node)
         srcpath = os.path.join(self.app.srcdir, image_node['uri'])
         abs_imgpath = os.path.join(abs_imagedir, basename)
 
-        last_modified = self.get_last_modified(image_node['uri'])
-        if not os.path.exists(srcpath):
+        last_modified = self.get_last_modified_for(image_node)
+        if last_modified is None:
             ret = False
         elif not os.path.exists(abs_imgpath) or os.stat(abs_imgpath).st_mtime < last_modified:
             ensuredir(os.path.dirname(abs_imgpath))
@@ -97,7 +100,7 @@ class ImageConverter(object):
             ret = True
 
         if ret:
-            if os.path.exists(srcpath) and os.path.exists(abs_imgpath):
+            if last_modified is not None and os.path.exists(abs_imgpath):
                 os.utime(abs_imgpath, (last_modified, last_modified))
 
             rel_imgpath = posixpath.join(rel_imagedir, basename)
@@ -107,6 +110,13 @@ class ImageConverter(object):
             image_node.replace_self(newnode)
         else:
             image_node.replace_self(nodes.Text(''))
+
+    def get_last_modified_for(self, node):
+        path = os.path.join(self.app.srcdir, node['uri'])
+        if os.path.exists(path):
+            return ceil(os.stat(path).st_mtime)
+        else:
+            return None
 
     def get_filename_for(self, node):
         return os.path.splitext(node['uri'])[0] + '.png'
@@ -122,10 +132,13 @@ def add_image_type(app, name, ext, handler):
         app.connect('doctree-read', on_doctree_read)
         app.connect('doctree-resolved', on_doctree_resolved)
         app.imageext_types = {}
+        app.imageext_url_patterns = {}
 
     if isinstance(ext, (list, tuple)):
         for e in ext:
             add_image_type(app, name, e, handler)
+    elif re.match('^\w+://', ext):
+        app.imageext_url_patterns[ext] = (name, handler)
     else:
         if ext.startswith('.'):
             ext = ext[1:]

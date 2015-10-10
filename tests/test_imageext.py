@@ -6,6 +6,7 @@ from time import time
 from docutils import nodes
 from shutil import copyfile
 from sphinx_testing import with_app
+from sphinx_testing.path import path
 from docutils.parsers.rst import directives
 from sphinxcontrib.imagehelper import add_image_type, ImageConverter
 from sphinxcontrib.imagehelper.imageext import on_builder_inited
@@ -87,6 +88,40 @@ class TestSphinxcontrib(unittest.TestCase):
             self.assertIsInstance(doctree[0], nodes.figure)
             self.assertIsInstance(doctree[0][0], nodes.image)
             self.assertEqual(doctree[0][0]['uri'], 'example.img')
+            self.assertEqual(doctree[0][0]['foo'], 1)
+            self.assertEqual(doctree[0][0]['bar'], 'abc')
+            self.assertIsInstance(doctree[0][1], nodes.caption)
+            self.assertEqual(doctree[0][1][0], 'here is caption')
+
+        with open(app.outdir / 'contents.html') as fd:
+            html = fd.read()
+            self.assertIn('<img alt="_images/converted.png" src="_images/converted.png" />', html)
+
+    @with_app(buildername='html', write_docstring=True, create_new_srcdir=True)
+    def test_add_image_type3(self, app, status, warnings):
+        """
+        .. figure:: http://example.com/example.img
+           :option: foo=1&bar=abc
+
+           here is caption
+        """
+        class TestImageConverter(MyImageConverter):
+            def get_last_modified_for(self, node):
+                return 0
+
+            def convert(self, node, filename, to):
+                path(to).write_text('')
+                return True
+
+        add_image_type(app, 'name', 'http://example.com/', TestImageConverter)
+        on_builder_inited(app)
+        app.build()
+
+        with open(app.builddir / 'doctrees' / 'contents.doctree', 'rb') as fd:
+            doctree = pickle.load(fd)
+            self.assertIsInstance(doctree[0], nodes.figure)
+            self.assertIsInstance(doctree[0][0], nodes.image)
+            self.assertEqual(doctree[0][0]['uri'], 'http://example.com/example.img')
             self.assertEqual(doctree[0][0]['foo'], 1)
             self.assertEqual(doctree[0][0]['bar'], 'abc')
             self.assertIsInstance(doctree[0][1], nodes.caption)

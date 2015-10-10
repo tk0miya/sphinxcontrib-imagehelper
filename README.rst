@@ -86,7 +86,7 @@ Helpers
         A definition of additional options.
         By default, it is empty dict.
 
-    `ImageConverter.get_last_modified(self, uri)`
+    `ImageConverter.get_last_modified_for(self, node)`
         Determine last modified time of target image.
         By default, this method returns the timestamp of the image file.
 
