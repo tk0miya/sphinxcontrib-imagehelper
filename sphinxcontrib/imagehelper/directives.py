@@ -19,10 +19,11 @@ class ImageExtMixIn(object):
         env = self.state.document.settings.env
         dirname = os.path.dirname(env.doc2path(env.docname, base=None))
         relpath = posixpath.join(dirname, self.arguments[0])
-        if self.arguments[0].find('://') == -1 and not os.access(os.path.join(env.srcdir, relpath), os.R_OK):
-            raise self.warning('%s file not readable: %s' % (self.imageext_type, self.arguments[0]))
+        if self.arguments[0].find('://') == -1:
+            if not os.access(os.path.join(env.srcdir, relpath), os.R_OK):
+                raise self.warning('%s file not readable: %s' % (self.imageext_type, self.arguments[0]))
+            env.note_dependency(relpath)
 
-        env.note_dependency(relpath)
         if isinstance(result[0], nodes.image):
             image = image_node(imageext_type=self.imageext_type,
                                **result[0].attributes)
