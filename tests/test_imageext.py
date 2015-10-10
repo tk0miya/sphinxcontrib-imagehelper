@@ -216,6 +216,7 @@ class TestSphinxcontrib(unittest.TestCase):
     def test_add_image_type_on_conversion_failed(self, app, status, warnings):
         """
         .. image:: example.img
+           :name: foo
         """
         class FailureConverter(ImageConverter):
             def convert(self, node, filename, to):

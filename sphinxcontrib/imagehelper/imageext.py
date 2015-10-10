@@ -109,7 +109,7 @@ class ImageConverter(object):
             newnode['uri'] = rel_imgpath
             image_node.replace_self(newnode)
         else:
-            image_node.replace_self(nodes.Text(''))
+            image_node.parent.remove(image_node)
 
     def get_last_modified_for(self, node):
         path = os.path.join(self.app.srcdir, node['uri'])
