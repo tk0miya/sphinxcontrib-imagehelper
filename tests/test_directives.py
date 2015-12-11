@@ -105,7 +105,6 @@ class TestSphinxcontrib(unittest.TestCase):
 
         with open(app.builddir / 'doctrees' / 'contents.doctree', 'rb') as fd:
             doctree = pickle.load(fd)
-            print doctree
             self.assertIsInstance(doctree[0], image_node)
             self.assertEqual(doctree[0]['uri'], 'contents.rst')
             self.assertEqual(doctree[0]['names'], ['target'])
