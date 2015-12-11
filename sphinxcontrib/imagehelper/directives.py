@@ -1,8 +1,11 @@
 import os
+import re
 import posixpath
 from docutils import nodes
 from docutils.parsers.rst.directives.images import Image, Figure
 from sphinxcontrib.imagehelper import image_node
+
+URI_PATTERN = re.compile('^\w+://')
 
 
 class ImageExtMixIn(object):
@@ -17,9 +20,11 @@ class ImageExtMixIn(object):
         self.prerun()
 
         env = self.state.document.settings.env
-        dirname = os.path.dirname(env.doc2path(env.docname, base=None))
-        relpath = posixpath.join(dirname, self.arguments[0])
-        if self.arguments[0].find('://') == -1:
+        if URI_PATTERN.match(self.arguments[0]):
+            relpath = self.arguments[0]
+        else:
+            dirname = os.path.dirname(env.doc2path(env.docname, base=None))
+            relpath = posixpath.join(dirname, self.arguments[0])
             if not os.access(os.path.join(env.srcdir, relpath), os.R_OK):
                 raise self.warning('%s file not readable: %s' % (self.imageext_type, self.arguments[0]))
             env.note_dependency(relpath)

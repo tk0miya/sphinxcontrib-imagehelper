@@ -9,6 +9,8 @@ from docutils.parsers.rst import directives
 from docutils.parsers.rst.directives.images import Image, Figure
 from sphinxcontrib.imagehelper.utils import get_imagedir
 
+URI_PATTERN = re.compile('^\w+://')
+
 
 class image_node(nodes.General, nodes.Element):
     pass
@@ -85,7 +87,10 @@ class ImageConverter(object):
     def visit(self, docname, image_node):
         rel_imagedir, abs_imagedir = get_imagedir(self.app, docname)
         basename = self.get_filename_for(image_node)
-        srcpath = os.path.join(self.app.srcdir, image_node['uri'])
+        if URI_PATTERN.match(image_node['uri']):
+            srcpath = image_node['uri']
+        else:
+            srcpath = os.path.join(self.app.srcdir, image_node['uri'])
         abs_imgpath = os.path.join(abs_imagedir, basename)
 
         last_modified = self.get_last_modified_for(image_node)
@@ -137,7 +142,7 @@ def add_image_type(app, name, ext, handler):
     if isinstance(ext, (list, tuple)):
         for e in ext:
             add_image_type(app, name, e, handler)
-    elif re.match('^\w+://', ext):
+    elif URI_PATTERN.match(ext):
         app.imageext_url_patterns[ext] = (name, handler)
     else:
         if ext.startswith('.'):
