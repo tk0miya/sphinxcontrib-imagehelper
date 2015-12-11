@@ -16,6 +16,7 @@ class ImageExtMixIn(object):
         pass
 
     def run(self):
+        name = self.options.pop('name', None)
         result = super(ImageExtMixIn, self).run()
         self.prerun()
 
@@ -42,6 +43,10 @@ class ImageExtMixIn(object):
                 image['uri'] = relpath
                 self.postrun(image)
                 node.replace_self(image)
+
+        if name:
+            self.options['name'] = name
+            self.add_name(result[0])
 
         return result
 

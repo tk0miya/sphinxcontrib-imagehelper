@@ -94,6 +94,23 @@ class TestSphinxcontrib(unittest.TestCase):
             self.assertEqual(doctree[0]['uri'], 'http://example.com/')
 
     @with_app(buildername='html', write_docstring=True, create_new_srcdir=True)
+    def test_add_image_directive_with_name_option(self, app, status, warnings):
+        """
+        .. foo-image:: contents.rst
+           :name: target
+        """
+        add_image_directive(app, 'foo')
+        with self.assertRaises(NotImplementedError):  # will raise error on writer
+            app.build()
+
+        with open(app.builddir / 'doctrees' / 'contents.doctree', 'rb') as fd:
+            doctree = pickle.load(fd)
+            print doctree
+            self.assertIsInstance(doctree[0], image_node)
+            self.assertEqual(doctree[0]['uri'], 'contents.rst')
+            self.assertEqual(doctree[0]['names'], ['target'])
+
+    @with_app(buildername='html', write_docstring=True, create_new_srcdir=True)
     def test_add_image_directive_with_option_spec(self, app, status, warnings):
         """
         .. foo-image:: contents.rst
