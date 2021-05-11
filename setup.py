@@ -4,11 +4,11 @@ from setuptools import setup, find_packages
 
 long_desc = open('README.rst').read()
 
-requires = ['Sphinx>=0.6']
+requires = ['Sphinx>=3.0']
 
 setup(
     name='sphinxcontrib-imagehelper',
-    version='1.1.1',
+    version='1.1.2',
     url='https://github.com/tk0miya/sphinxcontrib-imagehelper',
     license='BSD',
     author='Takeshi KOMIYA',
@@ -24,10 +24,12 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Documentation',
         'Topic :: Documentation :: Sphinx',
     ],
