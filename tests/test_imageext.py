@@ -228,4 +228,4 @@ class TestSphinxcontrib(unittest.TestCase):
         app.build()
 
         html = (app.builddir / 'html' / 'contents.html').read_text()
-        self.assertRegexpMatches(html, '<div class="body"[^>]*>\s*</div>')
+        self.assertRegexpMatches(html, r'<div class="body"[^>]*>\s*</div>')

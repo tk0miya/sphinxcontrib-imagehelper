@@ -5,7 +5,7 @@ from docutils import nodes
 from docutils.parsers.rst.directives.images import Image, Figure
 from sphinxcontrib.imagehelper import image_node
 
-URI_PATTERN = re.compile('^\w+://')
+URI_PATTERN = re.compile(r'^\w+://')
 
 
 class ImageExtMixIn(object):
