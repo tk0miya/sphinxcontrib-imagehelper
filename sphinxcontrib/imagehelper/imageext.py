@@ -8,9 +8,10 @@ from sphinx.util.osutil import ensuredir
 from docutils.parsers.rst import directives
 from docutils.parsers.rst.directives.images import Image, Figure
 from sphinxcontrib.imagehelper.utils import get_imagedir
+from sphinx.util import logging
 
 URI_PATTERN = re.compile('^\w+://')
-
+logger = logging.getLogger(__name__)
 
 class image_node(nodes.General, nodes.Element):
     pass
@@ -46,7 +47,6 @@ def on_builder_inited(app):
     Image.option_spec['option'] = directives.unchanged
     Figure.option_spec['option'] = directives.unchanged
 
-
 def on_doctree_read(app, doctree):
     for image in doctree.traverse(nodes.image):
         handler = get_imageext_handler(app, image['uri'])
@@ -55,13 +55,13 @@ def on_doctree_read(app, doctree):
         options = cgi.parse_qs(image.get('option', ''))
         for name in options:
             if name not in option_spec:
-                app.warn('Unsupported option `%s` found at %s' % (name, image['uri']))
+                logger.warning('Unsupported option `%s` found at %s' % (name, image['uri']))
             else:
                 try:
                     for value in options.get(name):
                         image[name] = option_spec[name](value)
                 except (ValueError, TypeError) as exc:
-                    app.warn('Fail to apply `%s` option to %s:\n%s' %
+                    logger.warning('Fail to apply `%s` option to %s:\n%s' %
                              (name, image['uri'], ' '.join(exc.args)))
 
 
@@ -82,7 +82,7 @@ class ImageConverter(object):
 
     def __init__(self, app):
         self.app = app
-        self.warn = app.warn
+        self.warn = logger.warning
 
     def visit(self, docname, image_node):
         rel_imagedir, abs_imagedir = get_imagedir(self.app, docname)
