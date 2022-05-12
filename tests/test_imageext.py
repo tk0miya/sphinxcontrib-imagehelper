@@ -44,7 +44,7 @@ class TestSphinxcontrib(unittest.TestCase):
         on_builder_inited(app)
         app.build()
 
-        with open(app.builddir / 'doctrees' / 'contents.doctree', 'rb') as fd:
+        with open(app.doctreedir / 'contents.doctree', 'rb') as fd:
             doctree = pickle.load(fd)
             self.assertIsInstance(doctree[0], nodes.image)
             self.assertEqual(doctree[0]['uri'], 'example.img')
@@ -83,7 +83,7 @@ class TestSphinxcontrib(unittest.TestCase):
         on_builder_inited(app)
         app.build()
 
-        with open(app.builddir / 'doctrees' / 'contents.doctree', 'rb') as fd:
+        with open(app.doctreedir / 'contents.doctree', 'rb') as fd:
             doctree = pickle.load(fd)
             self.assertIsInstance(doctree[0], nodes.figure)
             self.assertIsInstance(doctree[0][0], nodes.image)
@@ -117,7 +117,7 @@ class TestSphinxcontrib(unittest.TestCase):
         on_builder_inited(app)
         app.build()
 
-        with open(app.builddir / 'doctrees' / 'contents.doctree', 'rb') as fd:
+        with open(app.doctreedir / 'contents.doctree', 'rb') as fd:
             doctree = pickle.load(fd)
             self.assertIsInstance(doctree[0], nodes.figure)
             self.assertIsInstance(doctree[0][0], nodes.image)
@@ -164,7 +164,7 @@ class TestSphinxcontrib(unittest.TestCase):
         app.build()
 
         self.assertIn('WARNING: Unsupported option `baz` found at example.img', warnings.getvalue())
-        with open(app.builddir / 'doctrees' / 'contents.doctree', 'rb') as fd:
+        with open(app.doctreedir / 'contents.doctree', 'rb') as fd:
             doctree = pickle.load(fd)
             self.assertIsInstance(doctree[0], nodes.image)
             self.assertEqual(doctree[0]['uri'], 'example.img')
@@ -184,9 +184,9 @@ class TestSphinxcontrib(unittest.TestCase):
         app.build()
 
         self.assertIn(('WARNING: Fail to apply `foo` option to example.img:\n'
-                       'invalid literal for int() with base 10: \'abc\'\n'),
+                       'invalid literal for int() with base 10: \'abc\''),
                       warnings.getvalue())
-        with open(app.builddir / 'doctrees' / 'contents.doctree', 'rb') as fd:
+        with open(app.doctreedir / 'contents.doctree', 'rb') as fd:
             doctree = pickle.load(fd)
             self.assertIsInstance(doctree[0], nodes.image)
             self.assertEqual(doctree[0]['uri'], 'example.img')
@@ -205,7 +205,7 @@ class TestSphinxcontrib(unittest.TestCase):
         on_builder_inited(app)
         app.build()
 
-        with open(app.builddir / 'doctrees' / 'contents.doctree', 'rb') as fd:
+        with open(app.doctreedir / 'contents.doctree', 'rb') as fd:
             doctree = pickle.load(fd)
             self.assertIsInstance(doctree[0], nodes.image)
             self.assertEqual(doctree[0]['uri'], 'example.img')

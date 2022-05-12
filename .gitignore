@@ -4,6 +4,7 @@
 
 .coverage
 .tox/
+.eggs/
 bin/
 include/
 lib/

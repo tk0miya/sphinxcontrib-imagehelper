@@ -1,6 +1,6 @@
 import os
 import re
-import cgi
+from urllib.parse import parse_qs
 import posixpath
 from math import ceil
 from docutils import nodes
@@ -54,7 +54,7 @@ def on_doctree_read(app, doctree):
         handler = get_imageext_handler(app, image['uri'])
         option_spec = getattr(handler, 'option_spec', {})
 
-        options = cgi.parse_qs(image.get('option', ''))
+        options = parse_qs(image.get('option', ''))
         for name in options:
             if name not in option_spec:
                 logger.warning('Unsupported option `%s` found at %s' % (name, image['uri']))
