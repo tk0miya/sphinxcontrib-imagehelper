@@ -1,3 +1,8 @@
+Today, Sphinx officially provides sphinx.transforms.post_transforms.images.ImageConverter to create image extensions.
+https://github.com/sphinx-doc/sphinx/blob/5.x/sphinx/transforms/post_transforms/images.py#L23
+
+Therefore, the role of this helper is ended.
+
 sphinxcontrib-imagehelper
 ==========================
 
